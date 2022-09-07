@@ -1,94 +1,96 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 import queue
 import sounddevice as sd
 import vosk
 import sys
 import json
+import threading
+import tkinter as tk
 
-q = queue.Queue()
+class Window(object):
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.geometry("400x100")
+        self.text = tk.Label(self.root, font=['', 25])
+        self.text.grid()
+        self.root.after(500, self.update)
+    def update(self):
+        self.text.config(text=recg.text)
+        self.root.after(500, self.update)
 
-def int_or_str(text):
-    """Helper function for argument parsing."""
-    try:
-        return int(text)
-    except ValueError:
-        return text
 
-def callback(indata, frames, time, status):
-    """This is called (from a separate thread) for each audio block."""
-    if status:
-        print(status, file=sys.stderr)
-    q.put(bytes(indata))
+class Recognizer:#(threading.Thread):
+    def __init__(self, args):
+        super().__init__()
+        self.q = queue.Queue()
+        self.args = args
+        self.text = 'CC'
+    def callback(self, indata, frames, time, status):
+        """This is called (from a separate thread) for each audio block."""
+        if status:
+            print(status, file=sys.stderr)
+        self.q.put(bytes(indata))
+    def run(self):
+        if self.args.samplerate is None:
+            device_info = sd.query_devices(self.args.device, 'input')
+            print(device_info)
+            # soundfile expects an int, sounddevice provides a float:
+            self.args.samplerate = int(device_info['default_samplerate'])
 
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument(
-    '-l', '--list-devices', action='store_true',
-    help='show list of audio devices and exit')
-args, remaining = parser.parse_known_args()
-if args.list_devices:
-    print(sd.query_devices())
-    parser.exit(0)
-parser = argparse.ArgumentParser(
-    description=__doc__,
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    parents=[parser])
-parser.add_argument(
-    '-f', '--filename', type=str, metavar='FILENAME',
-    help='audio file to store recording to')
-parser.add_argument(
-    '-d', '--device', type=int_or_str, default='blackhole',
-    help='input device (numeric ID or substring)')
-parser.add_argument(
-    '-r', '--samplerate', type=int, help='sampling rate')
-args = parser.parse_args(remaining)
+        model = vosk.Model(lang="en-us")
 
-# import tkinter as tk
-# win = tk.Tk()
-# win.geometry("405x170")
-# txt = tk.Label(win, font=('times',20,'bold'), bg='yellow')
-# txt.grid(row=1, column=1, padx=5, pady=25)
-# txt.config(text='Caption')
+        if self.args.filename:
+            dump_fn = open(self.args.filename, "wb")
+        else:
+            dump_fn = None
 
-# def myprint(s):
-#     txt.config(text=txt)
+        with sd.RawInputStream(samplerate=self.args.samplerate, blocksize = 8000, device=self.args.device, dtype='int16',
+                                channels=1, callback=self.callback):
+                rec = vosk.KaldiRecognizer(model, args.samplerate)
+                while True:
+                    data = self.q.get()
+                    if rec.AcceptWaveform(data):
+                        self.text = json.loads(rec.Result())['text']
+                    else:
+                        self.text = json.loads(rec.PartialResult())['partial']
+                    print(self.text)
+                    if dump_fn is not None:
+                        dump_fn.write(data)
 
-def myprint(s):
-    print(s)
 
-try:
-    if args.samplerate is None:
-        device_info = sd.query_devices(args.device, 'input')
-        # soundfile expects an int, sounddevice provides a float:
-        args.samplerate = int(device_info['default_samplerate'])
+if __name__ == "__main__":
+    def int_or_str(text):
+        """Helper function for argument parsing."""
+        try:
+            return int(text)
+        except ValueError:
+            return text
 
-    model = vosk.Model(lang="en-us")
-
-    if args.filename:
-        dump_fn = open(args.filename, "wb")
-    else:
-        dump_fn = None
-
-    with sd.RawInputStream(samplerate=args.samplerate, blocksize = 8000, device=args.device, dtype='int16',
-                            channels=1, callback=callback):
-            print('#' * 80)
-            print('Press Ctrl+C to stop the recording')
-            print('#' * 80)
-
-            rec = vosk.KaldiRecognizer(model, args.samplerate)
-            while True:
-                data = q.get()
-                if rec.AcceptWaveform(data):
-                    myprint(json.loads(rec.Result())['text'])
-                else:
-                    myprint(json.loads(rec.PartialResult())['partial'])
-                if dump_fn is not None:
-                    dump_fn.write(data)
-
-except KeyboardInterrupt:
-    print('\nDone')
-    parser.exit(0)
-except Exception as e:
-    parser.exit(type(e).__name__ + ': ' + str(e))
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument(
+        '-l', '--list-devices', action='store_true',
+        help='show list of audio devices and exit')
+    args, remaining = parser.parse_known_args()
+    if args.list_devices:
+        print(sd.query_devices())
+        parser.exit(0)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        parents=[parser])
+    parser.add_argument(
+        '-f', '--filename', type=str, metavar='FILENAME',
+        help='audio file to store recording to')
+    parser.add_argument(
+        '-d', '--device', type=int_or_str, default='blackhole',
+        help='input device (numeric ID or substring)')
+    parser.add_argument(
+        '-r', '--samplerate', type=int, help='sampling rate')
+    args = parser.parse_args(remaining)
+    recg = Recognizer(args)
+    # recg.start()
+    recg.run()
+    # win = Window()
+    # win.root.mainloop()
