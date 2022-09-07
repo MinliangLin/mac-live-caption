@@ -45,16 +45,6 @@ parser.add_argument(
     '-r', '--samplerate', type=int, help='sampling rate')
 args = parser.parse_args(remaining)
 
-# import tkinter as tk
-# win = tk.Tk()
-# win.geometry("405x170")
-# txt = tk.Label(win, font=('times',20,'bold'), bg='yellow')
-# txt.grid(row=1, column=1, padx=5, pady=25)
-# txt.config(text='Caption')
-
-# def myprint(s):
-#     txt.config(text=txt)
-
 def myprint(s):
     print(s)
 
