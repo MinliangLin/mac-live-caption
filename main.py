@@ -39,15 +39,24 @@ parser.add_argument(
     '-f', '--filename', type=str, metavar='FILENAME',
     help='audio file to store recording to')
 parser.add_argument(
-    '-d', '--device', type=int_or_str,
+    '-d', '--device', type=int_or_str, default='blackhole',
     help='input device (numeric ID or substring)')
 parser.add_argument(
     '-r', '--samplerate', type=int, help='sampling rate')
 args = parser.parse_args(remaining)
 
+# import tkinter as tk
+# win = tk.Tk()
+# win.geometry("405x170")
+# txt = tk.Label(win, font=('times',20,'bold'), bg='yellow')
+# txt.grid(row=1, column=1, padx=5, pady=25)
+# txt.config(text='Caption')
+
+# def myprint(s):
+#     txt.config(text=txt)
+
 def myprint(s):
-    n = 120 - len(s)
-    print(' ' + s + ' ' * n, end='\r')
+    print(s)
 
 try:
     if args.samplerate is None:
