@@ -12,16 +12,17 @@ import tkinter as tk
 class Window(object):
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("400x100")
-        self.text = tk.Label(self.root, font=['', 25])
+        self.root.geometry("400x200")
+        self.root.config(bg='systemTransparent')
+        self.text = tk.Label(self.root, font=['', 25], wraplength=400)
         self.text.grid()
-        self.root.after(500, self.update)
+        self.root.after(100, self.update)
     def update(self):
         self.text.config(text=recg.text)
-        self.root.after(500, self.update)
+        self.root.after(100, self.update)
 
 
-class Recognizer:#(threading.Thread):
+class Recognizer(threading.Thread):
     def __init__(self, args):
         super().__init__()
         self.q = queue.Queue()
@@ -40,6 +41,7 @@ class Recognizer:#(threading.Thread):
             self.args.samplerate = int(device_info['default_samplerate'])
 
         model = vosk.Model(lang="en-us")
+        # model = vosk.Model(model_name="vosk-model-en-us-0.22-lgraph")
 
         if self.args.filename:
             dump_fn = open(self.args.filename, "wb")
@@ -52,10 +54,11 @@ class Recognizer:#(threading.Thread):
                 while True:
                     data = self.q.get()
                     if rec.AcceptWaveform(data):
-                        self.text = json.loads(rec.Result())['text']
+                        text = json.loads(rec.Result())['text']
                     else:
-                        self.text = json.loads(rec.PartialResult())['partial']
-                    print(self.text)
+                        text = json.loads(rec.PartialResult())['partial']
+                    if text != '':
+                        self.text = text
                     if dump_fn is not None:
                         dump_fn.write(data)
 
@@ -90,7 +93,6 @@ if __name__ == "__main__":
         '-r', '--samplerate', type=int, help='sampling rate')
     args = parser.parse_args(remaining)
     recg = Recognizer(args)
-    # recg.start()
-    recg.run()
-    # win = Window()
-    # win.root.mainloop()
+    recg.start()
+    win = Window()
+    win.root.mainloop()
