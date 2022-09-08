@@ -63,6 +63,7 @@ class Recognizer(threading.Thread):
                         dump_fn.write(data)
 
 
+
 if __name__ == "__main__":
     def int_or_str(text):
         """Helper function for argument parsing."""
