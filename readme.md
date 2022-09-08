@@ -1,8 +1,32 @@
-# install blackhole-2ch
+# Install
+First, install blackhole-2ch. You may use the below command or follow this [guide](https://github.com/ExistentialAudio/BlackHole#installation-instructions).
+
+```sh
 brew install blackhole-2ch
+```
 
-# TODO: create a multi-output device in audio midi setup
-echo ERROR && exit 1
+Second, create a **multi-output device** in `audio midi Setup`, which should be found from spotlight or mission control. The multi output device should *use* both your favour speaker and Blackhole 2ch.
 
-# install python packages
+![](docs/launchpad.jpg)
+
+![](docs/multi-output.jpg)
+
+Third, install python dependencies:
+```sh
 pip install sounddevice==0.4.4 vosk==0.3.43
+```
+
+# Usage
+Just run the below command, and for the application you live caption, select the **multi-output device** as its speaker.
+
+```sh
+python main.py
+```
+
+![](docs/speaker2.png)  
+
+# Help
+
+```sh
+python main.py -h
+```
