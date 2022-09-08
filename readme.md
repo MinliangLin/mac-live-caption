@@ -5,13 +5,14 @@ First, install blackhole-2ch. You may use the below command or follow this [guid
 brew install blackhole-2ch
 ```
 
-Second, create a **multi-output device** in `audio midi Setup`, which should be found from spotlight or mission control. The multi output device should *use* both your favour speaker and Blackhole 2ch.
+Second, create a **multi-output device** in `audio midi Setup`, which should be found from spotlight or lauchpad. The multi-output device should *use* both your favour speaker and Blackhole 2ch.
 
 ![](docs/launchpad.jpg)
 
 ![](docs/multi-output.jpg)
 
 Third, install python dependencies:
+
 ```sh
 pip install sounddevice==0.4.4 vosk==0.3.43
 ```
