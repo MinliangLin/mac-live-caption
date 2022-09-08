@@ -23,7 +23,7 @@ Just run the below command, and for the application you live caption, select the
 python main.py
 ```
 
-![](docs/speaker2.png)  
+![](docs/speaker.jpg)
 
 # Help
 
