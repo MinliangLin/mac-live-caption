@@ -31,3 +31,5 @@ python main.py
 ```sh
 python main.py -h
 ```
+
+Available models are listed [here](https://alphacephei.com/vosk/models). Have fun with that.
