@@ -3,7 +3,7 @@
 import argparse
 import queue
 import sounddevice as sd
-import vosk
+import whisper
 import sys
 import json
 import threading
@@ -16,10 +16,11 @@ class Window(object):
         self.root.config(bg='systemTransparent')
         self.text = tk.Label(self.root, font=['', 25], wraplength=400)
         self.text.grid()
-        self.root.after(100, self.update)
+        self.refresh_interval = 100
+        self.root.after(self.refresh_interval, self.update)
     def update(self):
         self.text.config(text=recg.text)
-        self.root.after(100, self.update)
+        self.root.after(self.refresh_interval, self.update)
 
 
 class Recognizer(threading.Thread):
@@ -50,7 +51,7 @@ class Recognizer(threading.Thread):
 
         with sd.RawInputStream(samplerate=self.args.samplerate, blocksize = 8000, device=self.args.device, dtype='int16',
                                 channels=1, callback=self.callback):
-                rec = vosk.KaldiRecognizer(model, args.samplerate)
+                model = whisper.load_model('base.en')
                 while True:
                     data = self.q.get()
                     if rec.AcceptWaveform(data):
@@ -85,13 +86,13 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         parents=[parser])
     parser.add_argument(
-        '-f', '--filename', type=str, metavar='FILENAME',
+        '-filename', type=str, metavar='FILENAME',
         help='audio file to store recording to')
     parser.add_argument(
-        '-d', '--device', type=int_or_str, default='blackhole',
+        '-device', type=int_or_str, default='blackhole',
         help='input device (numeric ID or substring)')
     parser.add_argument(
-        '-r', '--samplerate', type=int, help='sampling rate')
+        '-samplerate', type=int, help='sampling rate')
     args = parser.parse_args(remaining)
     recg = Recognizer(args)
     recg.start()
