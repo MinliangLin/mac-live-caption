@@ -5,7 +5,7 @@ First, install blackhole-2ch. You may use the below command or follow this [guid
 brew install blackhole-2ch
 ```
 
-Second, create a **multi-output device** in `audio midi Setup`, which should be found from spotlight or lauchpad. The multi-output device should *use* both your favour speaker and Blackhole 2ch.
+Second, create a **multi-output device** in `audio midi Setup`, which should be found from Spotlight or Lauchpad. The multi-output device should *use* both your favour speaker and Blackhole 2ch. And your favour speark should be above Blackhole 2ch.
 
 ![](docs/launchpad.jpg)
 
