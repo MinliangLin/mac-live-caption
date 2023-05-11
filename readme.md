@@ -1,35 +1,47 @@
 # Install
-First, install blackhole-2ch. You may use the below command or follow this [guide](https://github.com/ExistentialAudio/BlackHole#installation-instructions).
+First, install blackhole-2ch, which is necessary for capturing sound from other application.
+
+You may follow the [official guide](https://github.com/ExistentialAudio/BlackHole#installation-instructions) or just use the below command.
 
 ```sh
 brew install blackhole-2ch
 ```
 
-Second, create a **multi-output device** in `audio midi Setup`, which should be found from Spotlight or Lauchpad. The multi-output device should *use* both your favour speaker and Blackhole 2ch. And your favour speark should be above Blackhole 2ch.
+Second, create a **multi-output device** in `Audio MIDI Setup`, which could be found from *Lauchpad* or search `midi` in *Spotlight* (`⌘+space`). The multi-output device should *use* both your favour speakers and Blackhole 2ch.
+
+And your favour spearkers should be above Blackhole 2ch in the device list.
 
 ![](docs/launchpad.jpg)
 
 ![](docs/multi-output.jpg)
 
-Third, install python dependencies:
+Third, set up [whisper.cpp]( https://github.com/ggerganov/whisper.cpp) by the below command.
 
 ```sh
-pip install sounddevice==0.4.4 vosk==0.3.43
+git clone https://github.com/ggerganov/whisper.cpp ~/Desktop/whisper.cpp
+cd whisper.cpp
+
+bash models/download-ggml-model.sh base.en # download basic model
+make stream
+
+# start speech recogntion
+./stream -c 0
+```
+
+**0** in the last command is the device number of BlackHole. It may vary in different device. If you are not sure about that, just run `./stream` and see the first lines in the output.
+
+```
+init: found 5 capture devices:
+init:    - Capture device #0: 'BlackHole 2ch'
+init:    - Capture device #1: 'External Microphone'
+...
+```
+
+You may check other command options by
+
+```
+./stream -h
 ```
 
 # Usage
-Just run the below command, and for the application you live caption, select the **multi-output device** as its speaker.
-
-```sh
-python main.py
-```
-
-![](docs/speaker.jpg)
-
-# Help
-
-```sh
-python main.py -h
-```
-
-Available models are listed [here](https://alphacephei.com/vosk/models). Have fun with that.
+For the application you want a live caption, e.g. *Zoom*, select the **multi-output device** as its speaker.
