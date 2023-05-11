@@ -43,5 +43,17 @@ You may check other command options by
 ./stream -h
 ```
 
+There are other model avaialable as well.
+
+ Model  | Disk   | Mem     
+--------|--------|---------
+ tiny   | 75 MB  | ~125 MB 
+ base   | 142 MB | ~210 MB 
+ small  | 466 MB | ~600 MB 
+ medium | 1.5 GB | ~1.7 GB 
+ large  | 2.9 GB | ~3.3 GB 
+
+
+
 # Usage
 For the application you want a live caption, e.g. *Zoom*, select the **multi-output device** as its speaker.
