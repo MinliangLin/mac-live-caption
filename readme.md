@@ -45,15 +45,13 @@ You may check other command options by
 
 There are other model avaialable as well.
 
- Model  | Disk   | Mem     
---------|--------|---------
- tiny   | 75 MB  | ~125 MB 
- base   | 142 MB | ~210 MB 
- small  | 466 MB | ~600 MB 
- medium | 1.5 GB | ~1.7 GB 
- large  | 2.9 GB | ~3.3 GB 
-
-
+| Model  | Disk   | Mem     | WER(%) |
+|--------|--------|---------|--------|
+| tiny   | 75 MB  | ~125 MB | 6      |
+| base   | 142 MB | ~210 MB | 4.9    |
+| small  | 466 MB | ~600 MB | 4      |
+| medium | 1.5 GB | ~1.7 GB | 4.1    |
+| large  | 2.9 GB | ~3.3 GB | 4      |
 
 # Usage
 If you want to use live caption for an application such as *Zoom*, you will need to select the **multi-output device** as the speaker for that application.
