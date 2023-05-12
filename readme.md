@@ -7,9 +7,9 @@ You may follow the [official guide](https://github.com/ExistentialAudio/BlackHol
 brew install blackhole-2ch
 ```
 
-Second, create a **multi-output device** in `Audio MIDI Setup`, which could be found from *Lauchpad* or search `midi` in *Spotlight* (`⌘+space`). The multi-output device should *use* both your favour speakers and Blackhole 2ch.
+Second, create a **multi-output device** in `Audio MIDI Setup`, which could be accessed through *Lauchpad* or by searching `midi` in *Spotlight* (`⌘+space`). This device should *use* both your favour speakers and Blackhole 2ch.
 
-And your favour spearkers should be above Blackhole 2ch in the device list.
+Please ensure that your favour spearkers are listed above Blackhole 2ch in the device list.
 
 ![](docs/launchpad.jpg)
 
@@ -28,7 +28,7 @@ make stream
 ./stream -c 0
 ```
 
-**0** in the last command is the device number of BlackHole. It may vary in different device. If you are not sure about that, just run `./stream` and see the first lines in the output.
+In the last command, the number **0** is the device ID of BlackHole, which may vary depending on the specific device. If you are unsure of the device ID, you can run `./stream` and check the first lines of the output.
 
 ```
 init: found 5 capture devices:
@@ -56,4 +56,4 @@ There are other model avaialable as well.
 
 
 # Usage
-For the application you want a live caption, e.g. *Zoom*, select the **multi-output device** as its speaker.
+If you want to use live caption for an application such as *Zoom*, you will need to select the **multi-output device** as the speaker for that application.
